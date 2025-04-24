@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>POPKID-XTECH Fork Verifier</title>
   <style>
     body, html {
@@ -11,6 +12,7 @@
       font-family: Arial, sans-serif;
       color: white;
       text-align: center;
+      overflow: hidden; /* Prevent scrollbars */
     }
 
     #background-video {
@@ -19,34 +21,55 @@
       bottom: 0;
       min-width: 100%;
       min-height: 100%;
+      width: auto;
+      height: auto;
       object-fit: cover;
       z-index: -1;
     }
 
     .content {
-      position: relative;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       z-index: 2;
       padding: 30px;
-      background-color: rgba(0, 0, 0, 0.6);
-      max-width: 500px;
-      margin: auto;
+      background-color: rgba(0, 0, 0, 0.7); /* Slightly darker for better readability */
       border-radius: 10px;
-      margin-top: 10%;
+      max-width: 90%; /* Adjust for responsiveness */
+      width: 400px; /* Preferred width */
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    p {
+      margin-bottom: 15px;
     }
 
     input, button {
-      width: 100%;
-      padding: 10px;
+      width: calc(100% - 20px); /* Account for padding */
+      padding: 12px; /* Slightly larger for better touch */
       margin: 10px 0;
       border-radius: 5px;
       border: none;
+      font-size: 16px; /* Slightly larger font */
     }
 
     button {
       cursor: pointer;
-      background-color: #28a745;
       color: white;
       font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    #verifyBtn {
+      background-color: #28a745;
+    }
+
+    #verifyBtn:hover {
+      background-color: #218838;
     }
 
     #herokuLink {
@@ -54,12 +77,35 @@
       margin-top: 20px;
     }
 
+    #herokuLink a {
+      color: #ffc107;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    #herokuLink a:hover {
+      text-decoration: underline;
+    }
+
     #songsBtn {
       background-color: #17a2b8;
     }
 
+    #songsBtn:hover {
+      background-color: #138496;
+    }
+
     #forkBtn {
       background-color: #6f42c1;
+    }
+
+    #forkBtn:hover {
+      background-color: #563d7c;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -73,14 +119,14 @@
     <h2>🪆ᴇɴᴛᴇʀ ʏᴏᴜʀ ɢɪᴛʜᴜʙ ᴜsᴇʀɴᴀᴍᴇ ᴛᴏ ғᴏʀᴋ ᴘᴏᴘᴋɪᴅ xᴛᴇᴄʜ ʙᴏᴛ🪆</h2>
     <p>Enter your GitHub username:</p>
     <input type="text" id="username" placeholder="GitHub Username">
-    <button onclick="verifyFork()">Verify Fork</button>
+    <button id="verifyBtn" onclick="verifyFork()">Verify Fork</button>
     <button id="forkBtn" onclick="window.open('https://github.com/Popkiddevs/POPKID-XTECH/fork', '_blank')">Fork POPKID-XTECH</button>
     <button id="songsBtn" onclick="playSong()">Play Song</button>
 
     <div id="result"></div>
     <div id="herokuLink">
       <p>Fork verified! Launch the app here:</p>
-      <a href="https://dashboard.heroku.com/new?template=https://github.com/popkidxtech/ZIPPY-XTECH" target="_blank" style="color: #ffc107;">Go to Heroku App</a>
+      <a href="https://dashboard.heroku.com/new?template=https://github.com/popkidxtech/ZIPPY-XTECH" target="_blank">Go to Heroku App</a>
     </div>
 
     <audio id="songPlayer" src="https://files.catbox.moe/dsjh2p.m4a"></audio>
@@ -88,7 +134,8 @@
 
   <script>
     async function verifyFork() {
-      const username = document.getElementById('username').value.trim();
+      const usernameInput = document.getElementById('username');
+      const username = usernameInput.value.trim();
       const resultDiv = document.getElementById('result');
       const herokuDiv = document.getElementById('herokuLink');
 
@@ -102,9 +149,19 @@
 
       try {
         const response = await fetch(`https://api.github.com/users/${username}/repos`);
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            resultDiv.textContent = `User "${username}" not found on GitHub.`;
+          } else {
+            resultDiv.textContent = `GitHub API Error: ${response.status} - ${response.statusText}`;
+          }
+          return;
+        }
+
         const repos = await response.json();
 
-        const found = repos.find(repo =>
+        const found = repos.some(repo =>
           repo.fork && repo.parent &&
           repo.parent.full_name.toLowerCase() === 'popkiddevs/popkid-xtech'
         );
@@ -113,10 +170,13 @@
           resultDiv.textContent = 'Fork verified!';
           herokuDiv.style.display = 'block';
         } else {
-          resultDiv.textContent = 'Fork not found. Please fork the repository first.';
+          resultDiv.textContent = 'Fork of POPKID-XTECH not found under this username. Please ensure you have forked the repository.';
         }
       } catch (error) {
-        resultDiv.textContent = `Error: ${error.message}`;
+        console.error("Error during API call:", error);
+        resultDiv.textContent = `An unexpected error occurred: ${error.message}`;
+      } finally {
+        usernameInput.value = ''; // Clear the input field after checking
       }
     }
 
