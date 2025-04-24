@@ -34,35 +34,35 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 2;
-      padding: 40px; /* Increased padding */
-      background-color: transparent; /* Make the background transparent */
-      border-radius: 15px; /* More rounded corners */
-      max-width: 95%; /* Even more responsive */
-      width: 500px; /* Larger preferred width */
+      padding: 30px; /* Adjusted padding */
+      background-color: transparent; /* Colorless background */
+      border-radius: 10px; /* Adjusted border-radius */
+      max-width: 80%; /* Adjusted max-width for medium size */
+      width: 400px; /* Adjusted width for medium size */
     }
 
     h2 {
       margin-top: 0;
-      font-size: 2.5em; /* Larger heading */
-      margin-bottom: 20px;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a text shadow for better readability */
+      font-size: 2em; /* Adjusted heading size */
+      margin-bottom: 15px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
 
     p {
-      font-size: 1.2em; /* Larger paragraph text */
-      margin-bottom: 25px;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Add a text shadow */
+      font-size: 1em; /* Adjusted paragraph size */
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     }
 
     input, button {
-      width: calc(100% - 30px); /* Account for larger padding */
-      padding: 15px; /* Larger padding */
-      margin: 15px 0; /* Larger margin */
-      border-radius: 8px; /* More rounded corners */
-      border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border for definition */
-      background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent white background */
+      width: calc(100% - 20px); /* Adjusted for padding */
+      padding: 10px; /* Adjusted padding */
+      margin: 10px 0; /* Adjusted margin */
+      border-radius: 5px; /* Adjusted border-radius */
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background-color: rgba(255, 255, 255, 0.1);
       color: white;
-      font-size: 1.4em; /* Larger input and button text */
+      font-size: 1em; /* Adjusted input and button text size */
     }
 
     input::placeholder {
@@ -84,19 +84,19 @@
     }
 
     #herokuLinkContainer {
-      display: none; /* Initially hidden */
-      margin-top: 30px;
+      display: none;
+      margin-top: 20px;
     }
 
     #herokuLinkBtn {
-      display: block; /* Make it a block-level element to take full width */
-      background-color: #ffc107; /* Prominent color */
-      color: #000; /* Dark text for contrast */
+      display: block;
+      background-color: #ffc107;
+      color: #000;
       text-decoration: none;
       font-weight: bold;
-      padding: 18px; /* Larger padding for tap target */
-      border-radius: 8px;
-      font-size: 1.6em; /* Larger font for the button */
+      padding: 12px; /* Adjusted padding */
+      border-radius: 5px; /* Adjusted border-radius */
+      font-size: 1.2em; /* Adjusted font size */
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
@@ -122,8 +122,8 @@
     }
 
     #result {
-      margin-top: 30px;
-      font-size: 1.2em; /* Larger result text */
+      margin-top: 20px;
+      font-size: 1em; /* Adjusted result text size */
       font-weight: bold;
     }
   </style>
@@ -180,20 +180,20 @@
 
         const repos = await response.json();
 
-        // More precise check: Look for a repo with the exact name "POPKID-XTECH" that is a fork
-        const found = repos.some(repo =>
-          repo.name.toLowerCase() === 'popkid-xtech' &&
-          repo.fork &&
-          repo.owner.login.toLowerCase() === username.toLowerCase() && // Ensure it's under the user's account
-          repo.parent &&
-          repo.parent.full_name.toLowerCase() === 'popkiddevs/popkid-xtech'
-        );
+        const found = repos.some(repo => {
+          if (repo.fork && repo.parent) {
+            const parentFullNameLower = repo.parent.full_name.toLowerCase();
+            const expectedParentFullName = 'popkiddevs/popkid-xtech';
+            return parentFullNameLower === expectedParentFullName && repo.owner.login.toLowerCase() === username.toLowerCase();
+          }
+          return false;
+        });
 
         if (found) {
           resultDiv.textContent = 'Fork verified!';
           herokuLinkContainer.style.display = 'block';
         } else {
-          resultDiv.textContent = 'Fork of POPKID-XTECH not found under this username. Please ensure you have forked the repository and that the repository name is "POPKID-XTECH".';
+          resultDiv.textContent = `No valid fork of ${'POPKID-XTECH'} found under the username "${username}". Please ensure you have forked the repository directly from ${'https://github.com/Popkiddevs/POPKID-XTECH'} and that it belongs to your account.`;
         }
       } catch (error) {
         console.error("Error during API call:", error);
