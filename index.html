@@ -12,7 +12,8 @@
       font-family: Arial, sans-serif;
       color: white;
       text-align: center;
-      overflow: hidden; /* Prevent scrollbars */
+      overflow: hidden;
+      background-color: #000; /* Fallback background color */
     }
 
     #background-video {
@@ -33,28 +34,31 @@
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 2;
-      padding: 30px;
-      background-color: rgba(0, 0, 0, 0.7); /* Slightly darker for better readability */
-      border-radius: 10px;
-      max-width: 90%; /* Adjust for responsiveness */
-      width: 400px; /* Preferred width */
+      padding: 40px; /* Increased padding */
+      background-color: rgba(0, 0, 0, 0.8); /* Slightly darker and more padding */
+      border-radius: 15px; /* More rounded corners */
+      max-width: 95%; /* Even more responsive */
+      width: 500px; /* Larger preferred width */
     }
 
     h2 {
       margin-top: 0;
+      font-size: 2.5em; /* Larger heading */
+      margin-bottom: 20px;
     }
 
     p {
-      margin-bottom: 15px;
+      font-size: 1.2em; /* Larger paragraph text */
+      margin-bottom: 25px;
     }
 
     input, button {
-      width: calc(100% - 20px); /* Account for padding */
-      padding: 12px; /* Slightly larger for better touch */
-      margin: 10px 0;
-      border-radius: 5px;
+      width: calc(100% - 30px); /* Account for larger padding */
+      padding: 15px; /* Larger padding */
+      margin: 15px 0; /* Larger margin */
+      border-radius: 8px; /* More rounded corners */
       border: none;
-      font-size: 16px; /* Slightly larger font */
+      font-size: 1.4em; /* Larger input and button text */
     }
 
     button {
@@ -72,19 +76,26 @@
       background-color: #218838;
     }
 
-    #herokuLink {
-      display: none;
-      margin-top: 20px;
+    #herokuLinkContainer {
+      display: none; /* Initially hidden */
+      margin-top: 30px;
     }
 
-    #herokuLink a {
-      color: #ffc107;
+    #herokuLinkBtn {
+      display: block; /* Make it a block-level element to take full width */
+      background-color: #ffc107; /* Prominent color */
+      color: #000; /* Dark text for contrast */
       text-decoration: none;
       font-weight: bold;
+      padding: 18px; /* Larger padding for tap target */
+      border-radius: 8px;
+      font-size: 1.6em; /* Larger font for the button */
+      cursor: pointer;
+      transition: background-color 0.3s ease;
     }
 
-    #herokuLink a:hover {
-      text-decoration: underline;
+    #herokuLinkBtn:hover {
+      background-color: #e0a800;
     }
 
     #songsBtn {
@@ -104,7 +115,8 @@
     }
 
     #result {
-      margin-top: 20px;
+      margin-top: 30px;
+      font-size: 1.2em; /* Larger result text */
       font-weight: bold;
     }
   </style>
@@ -124,9 +136,9 @@
     <button id="songsBtn" onclick="playSong()">Play Song</button>
 
     <div id="result"></div>
-    <div id="herokuLink">
-      <p>Fork verified! Launch the app here:</p>
-      <a href="https://dashboard.heroku.com/new?template=https://github.com/popkidxtech/ZIPPY-XTECH" target="_blank">Go to Heroku App</a>
+    <div id="herokuLinkContainer">
+      <p>Fork verified! Tap to launch the app:</p>
+      <a id="herokuLinkBtn" href="https://dashboard.heroku.com/new?template=https://github.com/popkidxtech/ZIPPY-XTECH" target="_blank">Launch on Heroku</a>
     </div>
 
     <audio id="songPlayer" src="https://files.catbox.moe/dsjh2p.m4a"></audio>
@@ -137,10 +149,10 @@
       const usernameInput = document.getElementById('username');
       const username = usernameInput.value.trim();
       const resultDiv = document.getElementById('result');
-      const herokuDiv = document.getElementById('herokuLink');
+      const herokuLinkContainer = document.getElementById('herokuLinkContainer');
 
       resultDiv.textContent = 'Checking...';
-      herokuDiv.style.display = 'none';
+      herokuLinkContainer.style.display = 'none';
 
       if (!username) {
         resultDiv.textContent = 'Please enter your GitHub username.';
@@ -168,7 +180,7 @@
 
         if (found) {
           resultDiv.textContent = 'Fork verified!';
-          herokuDiv.style.display = 'block';
+          herokuLinkContainer.style.display = 'block';
         } else {
           resultDiv.textContent = 'Fork of POPKID-XTECH not found under this username. Please ensure you have forked the repository.';
         }
