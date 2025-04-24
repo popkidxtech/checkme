@@ -35,7 +35,7 @@
       transform: translate(-50%, -50%);
       z-index: 2;
       padding: 40px; /* Increased padding */
-      background-color: rgba(0, 0, 0, 0.8); /* Slightly darker and more padding */
+      background-color: transparent; /* Make the background transparent */
       border-radius: 15px; /* More rounded corners */
       max-width: 95%; /* Even more responsive */
       width: 500px; /* Larger preferred width */
@@ -45,11 +45,13 @@
       margin-top: 0;
       font-size: 2.5em; /* Larger heading */
       margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a text shadow for better readability */
     }
 
     p {
       font-size: 1.2em; /* Larger paragraph text */
       margin-bottom: 25px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Add a text shadow */
     }
 
     input, button {
@@ -57,13 +59,18 @@
       padding: 15px; /* Larger padding */
       margin: 15px 0; /* Larger margin */
       border-radius: 8px; /* More rounded corners */
-      border: none;
+      border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border for definition */
+      background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent white background */
+      color: white;
       font-size: 1.4em; /* Larger input and button text */
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
     }
 
     button {
       cursor: pointer;
-      color: white;
       font-weight: bold;
       transition: background-color 0.3s ease;
     }
@@ -173,8 +180,12 @@
 
         const repos = await response.json();
 
+        // More precise check: Look for a repo with the exact name "POPKID-XTECH" that is a fork
         const found = repos.some(repo =>
-          repo.fork && repo.parent &&
+          repo.name.toLowerCase() === 'popkid-xtech' &&
+          repo.fork &&
+          repo.owner.login.toLowerCase() === username.toLowerCase() && // Ensure it's under the user's account
+          repo.parent &&
           repo.parent.full_name.toLowerCase() === 'popkiddevs/popkid-xtech'
         );
 
@@ -182,7 +193,7 @@
           resultDiv.textContent = 'Fork verified!';
           herokuLinkContainer.style.display = 'block';
         } else {
-          resultDiv.textContent = 'Fork of POPKID-XTECH not found under this username. Please ensure you have forked the repository.';
+          resultDiv.textContent = 'Fork of POPKID-XTECH not found under this username. Please ensure you have forked the repository and that the repository name is "POPKID-XTECH".';
         }
       } catch (error) {
         console.error("Error during API call:", error);
