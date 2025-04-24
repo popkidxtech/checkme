@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>POPKID-XTECH Fork Verifier</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+    }
+
+    #background-video {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      padding: 30px;
+      background-color: rgba(0, 0, 0, 0.6);
+      max-width: 500px;
+      margin: auto;
+      border-radius: 10px;
+      margin-top: 10%;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      cursor: pointer;
+      background-color: #28a745;
+      color: white;
+      font-weight: bold;
+    }
+
+    #herokuLink {
+      display: none;
+      margin-top: 20px;
+    }
+
+    #songsBtn {
+      background-color: #17a2b8;
+    }
+
+    #forkBtn {
+      background-color: #6f42c1;
+    }
+  </style>
+</head>
+<body>
+  <video autoplay muted loop id="background-video">
+    <source src="https://files.catbox.moe/lso28c.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <div class="content">
+    <h2>🪆ᴇɴᴛᴇʀ ʏᴏᴜʀ ɢɪᴛʜᴜʙ ᴜsᴇʀɴᴀᴍᴇ ᴛᴏ ғᴏʀᴋ ᴘᴏᴘᴋɪᴅ xᴛᴇᴄʜ ʙᴏᴛ🪆</h2>
+    <p>Enter your GitHub username:</p>
+    <input type="text" id="username" placeholder="GitHub Username">
+    <button onclick="verifyFork()">Verify Fork</button>
+    <button id="forkBtn" onclick="window.open('https://github.com/Popkiddevs/POPKID-XTECH/fork', '_blank')">Fork POPKID-XTECH</button>
+    <button id="songsBtn" onclick="playSong()">Play Song</button>
+
+    <div id="result"></div>
+    <div id="herokuLink">
+      <p>Fork verified! Launch the app here:</p>
+      <a href="https://dashboard.heroku.com/new?template=https://github.com/popkidxtech/ZIPPY-XTECH" target="_blank" style="color: #ffc107;">Go to Heroku App</a>
+    </div>
+
+    <audio id="songPlayer" src="https://files.catbox.moe/dsjh2p.m4a"></audio>
+  </div>
+
+  <script>
+    async function verifyFork() {
+      const username = document.getElementById('username').value.trim();
+      const resultDiv = document.getElementById('result');
+      const herokuDiv = document.getElementById('herokuLink');
+
+      resultDiv.textContent = 'Checking...';
+      herokuDiv.style.display = 'none';
+
+      if (!username) {
+        resultDiv.textContent = 'Please enter your GitHub username.';
+        return;
+      }
+
+      try {
+        const response = await fetch(`https://api.github.com/users/${username}/repos`);
+        const repos = await response.json();
+
+        const found = repos.find(repo =>
+          repo.fork && repo.parent &&
+          repo.parent.full_name.toLowerCase() === 'popkiddevs/popkid-xtech'
+        );
+
+        if (found) {
+          resultDiv.textContent = 'Fork verified!';
+          herokuDiv.style.display = 'block';
+        } else {
+          resultDiv.textContent = 'Fork not found. Please fork the repository first.';
+        }
+      } catch (error) {
+        resultDiv.textContent = `Error: ${error.message}`;
+      }
+    }
+
+    function playSong() {
+      const player = document.getElementById('songPlayer');
+      player.play();
+    }
+  </script>
+</body>
+</html>
